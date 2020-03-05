@@ -26,7 +26,6 @@ document.write("<h3>Tutorial Object:</h3>");
 document.write("<br/><strong>getFunction result:</strong> <br/>" + person.getFunction());
 document.write("<br/><br/><strong>Object Defined Inside person Object:</strong> <br/><em>person.phone_number.landline = </em>" + person.phone_number.landline);
 
-document.write('<br/><br/>==================================================================<br/><br/>');
 //Custom object
 let starfleetShip = {
     call_sign: "NCC-1234-A",
@@ -43,7 +42,7 @@ let starfleetShip = {
     }
 };
 
-document.write("<h3>Custom Object:</h3>");
+document.write("<br/><h3>Custom Object:</h3>");
 document.write("<br/><strong>getInfoFunction result:</strong> <br/>" + starfleetShip.getInfoFunction());
 document.write("<br/><br/><strong>Custom Object Defined inside starfleetShip object:</strong> <br/><em>starfleetShip.replicator.type = </em>" + starfleetShip.replicator.type);
 
