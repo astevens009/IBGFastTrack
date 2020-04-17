@@ -1,0 +1,16 @@
+body {
+  background-color: black;
+  color: #00ff00;
+}
+
+.pStyle {
+  text-align: justify;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.inputStyle {
+  background-color: black;
+  border-color: chartreuse;
+  color: chartreuse;
+}
