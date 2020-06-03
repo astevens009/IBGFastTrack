@@ -1,0 +1,20 @@
+body{
+    background-color: #00001a;
+    color: goldenrod;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14pt;
+}
+
+h1{
+    /*font-family: url(./Fonts/Starfleet_2.tff);*/
+    font-size: 36pt;
+}
+
+.StarShipCard{
+    width: 60%;
+    margin: 16px auto;
+    border: 2px solid goldenrod;
+    box-shadow: 0, 2px 3px gold;
+    padding: 16px;
+    text-align: center;
+}
