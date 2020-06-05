@@ -5,12 +5,15 @@ import './App.css';
 class App extends Component {
   state = {
     starShipInfo: [
-      {status: "Destroyed", callSign: "NCC-1701", shipName: "U.S.S. Enterprise"},
-      {status: "On Assignment", callSign: "NCC-1701-F", shipName: "U.S.S. Enterprise-F"},
-      {status: "Active", callSign: "NCC-11638", shipName: "U.S.S. Agamemnon"},
-      {status: "Destroyed", callSign: "NCC-2893", shipName: "U.S.S. Stargazer"},
-      {status: "Repairs", callSign: "NCC-72617", shipName: "U.S.S. Mekong"}
-    ]
+      {id: "NCC1701", status: "Destroyed", callSign: "NCC-1701", shipName: "U.S.S. Enterprise"},
+      {id: "NCC1701f", status: "On Assignment", callSign: "NCC-1701-F", shipName: "U.S.S. Enterprise-F"},
+      {id: "NCC11638", status: "Active", callSign: "NCC-11638", shipName: "U.S.S. Agamemnon"},
+      {id: "NCC2893", status: "Destroyed", callSign: "NCC-2893", shipName: "U.S.S. Stargazer"},
+      {id: "NCC72617", status: "Repairs", callSign: "NCC-72617", shipName: "U.S.S. Mekong"}
+    ],
+
+    // NOTE: Add a property (flag) that will determine whether or not to show the list of ships
+    showShips: false
   }
 
   updateStatusHandler = () => {
@@ -18,12 +21,31 @@ class App extends Component {
     // console.log("Handler reached");
     this.setState({
       starShipInfo: [
-        {status: "Rebuilt", callSign: "NCC-1701", shipName: "U.S.S. Enterprise"},
-        {status: "Mission Complete", callSign: "NCC-1701-F", shipName: "U.S.S. Enterprise-F"},
-        {status: "Active", callSign: "NCC-11638", shipName: "U.S.S. Agamemnon"},
-        {status: "Restored", callSign: "NCC-2893", shipName: "U.S.S. Stargazer"},
-        {status: "Repairs", callSign: "NCC-72617", shipName: "U.S.S. Mekong"}
+        {id: "NCC1701", status: "Rebuilt", callSign: "NCC-1701", shipName: "U.S.S. Enterprise"},
+        {id: "NCC1701F", status: "Mission Complete", callSign: "NCC-1701-F", shipName: "U.S.S. Enterprise-F"},
+        {id: "NCC11638", status: "Active", callSign: "NCC-11638", shipName: "U.S.S. Agamemnon"},
+        {id: "NCC2893", status: "Restored", callSign: "NCC-2893", shipName: "U.S.S. Stargazer"},
+        {id: "NCC72617", status: "Repairs", callSign: "NCC-72617", shipName: "U.S.S. Mekong"}
       ]
+    })
+  }
+
+  deleteShipHandler = (shipIndex) =>{
+    // NOTE : Retrieve the array; remember this is a pointer and we are mutating the original element it's pointing to
+    // const ships = this.state.starShipInfo;
+
+    // Alternative #1: Rather than mutating the original arry use the slice() method to make a copy...
+    // const ships = this.state.starShipInfo.slice();
+
+    // Alternative #2: Use the spread operator; most common approach
+    const ships =[...this.state.starShipInfo];
+
+    // NOTE: Remove the selected element from the array; remember this is still poiting to the original array therfore we are mutating the original array which is bad practice
+    ships.splice(shipIndex, 1);
+
+    // NOTE: Update and re-render the component
+    this.setState({
+      starShipInfo: ships
     })
   }
 
@@ -32,42 +54,97 @@ class App extends Component {
   }
 
   // NOTE: The following code will only change the name of the Stargazer ship
-  changeShipNameHandler = (event) => {
+  changeShipNameHandler = (event, id) => {
+    // NOTE: Using the find() method and the id to identify the specific ship element to change
+    // const shipIndex = this.state.starShipInfo.find();
+
+    // ALTERNATIVELY: Use the findIndex() method; findIndex() takes a method which is executed on every element of the array
+    const shipIndex = this.state.starShipInfo.findIndex(sh =>{
+      return sh.id === id;
+    })
+
+    /* NOTE: Retrieve the ship whose index is returned; remember not to mutate the original but to create a "copy" using the spread operator
+       ALTERNATIVELY:
+      Using the assign() method of Object class
+      const person = Object.assign({}, this.state.starShipInfo[shipIndex]);
+    */
+    const fleetShipsUpdate = {
+      ...this.state.starShipInfo[shipIndex]
+    };
+
+    // NOTE: Modify the copy...
+    fleetShipsUpdate.shipName = event.target.value;
+
+    // NOTE: Create a copy of the array using the spread operator
+    const starShipInfo = [...this.state.starShipInfo]
+    starShipInfo[shipIndex] = fleetShipsUpdate;
+
     this.setState({
-      starShipInfo: [
-        {status: "Rebuilt", callSign: "NCC-1701", shipName: "U.S.S.Enterprise"},
-        {status: "Mission Complete", callSign: "NCC-1701-F", shipName: "U.S.S. Enterprise-F"},
-        {status: "Active", callSign: "NCC-11638", shipName: "U.S.S. Agamemnon"},
-        {status: "Restored", callSign: "NCC-2893", shipName: event.target.value},
-        {status: "Repairs", callSign: "NCC-72617", shipName: "U.S.S. Mekong"}
-      ]
+      starShipInfo: starShipInfo
+    })
+  }
+
+  toggleShipsHandler = () =>{
+    // NOTE: Displays or hides the list of ships
+    const displayShipsList = this.state.showShips;
+
+    this.setState({
+      showShips: !displayShipsList
     })
   }
 
   render() {
-    // NOTE: Defining an inline style
-    // This is scoped to whichever local element it is applied to
-    const ufpStyle = {
-      backgroundColor: 'goldenrod',
-      color: '#00001a',
-      border: '1px solid #0000b3',
-      padding: '8px',
-      cursor: 'pointer'
-    };
+    // NOTE: Whenever ReactJS loads the app this render() method is called
+
+    let ships = null;
+
+    if(this.state.showShips){
+      ships = (
+        // NOTE: Using JavaScript to render dynamic content
+        <div>
+          {/* Use the map() function to convert the array to a list of ship components
+            The map() method can take a second argument; in this example we'll pass in the index of the array
+          */}
+          {this.state.starShipInfo.map(
+            (shipList, index) => {
+            return <Ship 
+            key={shipList.id}
+            callSign={shipList.callSign}
+            shipName={shipList.shipName}
+            changeName={(event) => this.changeShipNameHandler(event, shipList.id)}
+            remove={() => this.deleteShipHandler(index)}>
+              Current Status: {shipList.status}            
+            </Ship>
+            }
+          )}
+        </div>
+      );
+    }
+
 
     return (
       <div className="App">
         <h1>UFP Starfleet Ships</h1>
-        <button 
-        style={ufpStyle}
-        onClick={this.updateStatusHandler}>Update Status</button>
+        <button className="buttonStyle" onClick={this.toggleShipsHandler}>Display Ships</button>
+        <button className="buttonStyle" onClick={this.updateStatusHandler}>Update Status</button>
         <br/>
         <br/>
-        <Ship
+        {
+          // NOTE: Display the result of the ships variable defined inside the render() method above
+          ships
+        }
+      </div>
+    );
+  }
+}
+
+export default App;
+
+/*
+<Ship
         callSign = {this.state.starShipInfo[0].callSign}
         shipName = {this.state.starShipInfo[0].shipName}
         onShipClick = {this.displayStatusHandler.bind(this, "On Assignment")}
-        changeName = {this.changeShipNameHandler}
     ><strong>Current Status: </strong>{this.state.starShipInfo[0].status}</Ship>
         <br/>
         <Ship
@@ -91,9 +168,4 @@ class App extends Component {
         callSign = {this.state.starShipInfo[4].callSign}
         shipName = {this.state.starShipInfo[4].shipName}
         ><strong>Current Status: </strong>{this.state.starShipInfo[4].status}</Ship>
-      </div>
-    );
-  }
-}
-
-export default App;
+*/
