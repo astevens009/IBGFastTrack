@@ -14,6 +14,8 @@ const starShip = (props) => {
             <label><strong>Change Ship Name:</strong></label>
             <br/>
             <input type="text" onChange={props.changeName} value={props.shipName}/>
+            <br/>
+            <button id="removeShip" className="buttonStyle" onClick={props.remove}>Remove Ship</button>
         </div>
     )
 }
